@@ -3,79 +3,99 @@ const userHomeDir = os.homedir();
 const homedir = process.env.HOME || userHomeDir;
 const p = require("path");
 const dbPath = p.join(homedir, ".todo");
-const push=require("./writeFile")
-const db=require("./readFile")
+const push = require("./writeFile");
+const db = require("./readFile");
+const inquirer = require("inquirer");
 
-
-
-
-module.exports.add =async(args) => {
-  const list =await db.read(dbPath)
-   await push.echo(args,list,dbPath)
+module.exports.add = async (args) => {
+  const list = await db.read(dbPath);
+  await push.echo(list, dbPath, args);
+  console.log(list);
 };
 
-module.exports.clear =async() => {
-    const args=[]
-    await push.echo(args,[],dbPath)
+module.exports.clear = async () => {
+  const args = [];
+  await push.echo([], dbPath, args);
 };
 
-module.exports.showAll =async() => {
-    const list =await db.read(dbPath)
-    list.forEach((item,index)=>{
-        console.log(`${item.done?"[√]":"[_]"} ${index} - ${item.taskName}`)
-    })
+module.exports.showAll = async () => {
+  const list = await db.read(dbPath);
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "index",
+        message: "你想要操作哪个任务?",
+        choices: [
+          { name: "[_] 新建任务", value: "-2" },
+          ...list.map((item, index) => {
+            return {
+              name: `${item.done ? "[√]" : "[_]"} ${index + 1} - ${
+                item.taskName
+              }`,
+              value: index.toString(),
+            };
+          }),
+          { name: "退出", value: "-1" },
+        ],
+      },
+    ])
+    .then((answer) => {
+      const index = answer.index;
+      console.log(index);
+      if (index >= 0) {
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "action",
+              message: "请选择",
+              choices: [
+                { name: "已完成", value: "completed" },
+                { name: "未完成", value: "undone" },
+                { name: "修改", value: "modify" },
+                { name: "删除", value: "remove" },
+                { name: "退出", value: "quit" },
+              ],
+            },
+          ])
+          .then((answer2) => {
+            if (answer2.action === "completed") {
+              list[index].done = true;
+              push.echo(list, dbPath);
+            } else if (answer2.action === "undone") {
+              list[index].done = false;
+              push.echo(list, dbPath);
+            } else if (answer2.action === "remove") {
+              list.splice(index, 1);
+              push.echo(list, dbPath);
+            } else if (answer2.action === "modify") {
+              inquirer
+                .prompt({
+                  type: "input",
+                  name: "task",
+                  message: "输入新的任务名",
+                  default: list[index].taskName,
+                })
+                .then((answer3) => {
+                  list[index].taskName = answer3.task;
+                  push.echo(list, dbPath);
+                });
+            }
+          });
+      } else if (index === "-2") {
+        inquirer
+          .prompt({
+            type: "input",
+            name: "newTask",
+            message: "请输入任务名",
+            // default:list[index].taskName
+          })
+          .then((answer4) => {
+            const newTask = { taskName: answer4.newTask, done: false };
+            list.push(newTask);
+            push.echo(list, dbPath);
+          });
+      }
+    });
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// module.exports.add =async(args) => {
-//   const list =await db.read(dbPath)
-
-
-
-//   fs.open(dbPath, "a+", (err, fd) => {
-//     fs.readFile(dbPath, "utf8", (error, data) => {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         let list;
-//         try {
-//           list = JSON.parse(data.toString());
-//         } catch (error2) {
-//           list = [];
-//         }
-//         console.log(list);
-//         let task
-//         args.map(item=>{
-//           list.push({
-//             taskName:item,
-//             done:false
-//           })
-//         })
-//         const string=JSON.stringify(list)
-//         fs.writeFile(dbPath,string+'\n', (error3)=>{
-//            if(error3)console.log(error3)
-//         })
-//       }
-//     });
-//   });
-// };

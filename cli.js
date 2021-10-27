@@ -17,9 +17,11 @@ program
 
 if(process.argv.length===2){
     showAll().then()
+}else{
+    program.parse(process.argv);
 }
 
 
 
-// program.parse(process.argv);
+
 
