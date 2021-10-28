@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const os = require("os");
 const userHomeDir = os.homedir();
 const homedir = process.env.HOME || userHomeDir;
