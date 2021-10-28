@@ -7,6 +7,8 @@ const push = require("./writeFile");
 const db = require("./readFile");
 const inquirer = require("inquirer");
 
+
+
 module.exports.add = async (args) => {
   const list = await db.read(dbPath);
   await push.echo(list, dbPath, args);
@@ -18,8 +20,17 @@ module.exports.clear = async () => {
   await push.echo([], dbPath, args);
 };
 
+
+
+
+
+
 module.exports.showAll = async () => {
   const list = await db.read(dbPath);
+  //打印之前的任务并返回操作的index
+  printTasks(list)
+  //询问操作并处理操作
+
   inquirer
     .prompt([
       {
