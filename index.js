@@ -21,7 +21,7 @@ module.exports.clear = async () => {
 
 module.exports.showAll = async () => {
     const list = await db.read(dbPath);
-    //打印之前的任务并返回操作的index
+    //打印之前的任务并得到index
     let index
     await printTasks(list).then((answer) => {
         index = answer
