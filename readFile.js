@@ -1,4 +1,5 @@
 const fs = require("fs");
+jest.mock("fs")
 const db={
      read(path){
         return new Promise((resolve,reject)=>{

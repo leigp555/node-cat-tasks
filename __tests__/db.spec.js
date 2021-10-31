@@ -1,11 +1,24 @@
 const db=require("../readFile")
+const fs = require("fs");
+//模拟fs
+jest.mock("fs")
+
+fs.setFile("/xxx",null,{name:"lgp"})
+let list
+fs.readFile("/xxx",(error,data)=>{
+    list=data
+})
 
 
-describe("db",()=>{
-    it("canRead",()=>{
-        expect(db.read instanceof Function)
-    })
-    it("canWrite",()=>{
-       expect((1+1)).toBe(2)
+
+describe("xx",()=>{
+    it('xx',()=>{
+        expect(list).toStrictEqual({name:"lgp"})
     })
 })
+
+
+
+
+
+
