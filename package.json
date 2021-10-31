@@ -6,6 +6,9 @@
   "files": [
     "*.js"
   ],
+  "scripts": {
+    "test": "jest"
+  },
   "version": "0.0.2",
   "main": "index.js",
   "license": "MIT",
@@ -14,6 +17,8 @@
     "inquirer": "^8.2.0",
     "nrm": "^1.2.1",
     "user": "0.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1"
   }
 }
- 
